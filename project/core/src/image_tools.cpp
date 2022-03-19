@@ -10,11 +10,9 @@
 
 using namespace charta::ImageTools;
 
-Image::Image(size_t height_, size_t width_) : height(height_), width(width_)
-{
+Image::Image(size_t height_, size_t width_) : height(height_), width(width_) {
     if (!(0 < height && height <= MAX_HEIGHT) ||
-        !(0 < width && width <= MAX_WIDTH))
-    {
+        !(0 < width && width <= MAX_WIDTH)) {
         throw DimensionsError("");
     }
     try {
@@ -24,17 +22,16 @@ Image::Image(size_t height_, size_t width_) : height(height_), width(width_)
     }
 }
 
-void Image::dump(const std::filesystem::path &filename)
-{
-    if (!stbi_write_bmp(filename.c_str(), width, height, RGB_CHANELLS_NO, pixels.data()))
-    {
+void Image::dump(const std::filesystem::path &filename) {
+    if (!stbi_write_bmp(filename.c_str(), width, height, RGB_CHANELLS_NO,
+                        pixels.data())) {
         throw DumpError();
     }
 }
 
-const std::vector<uint8_t> &Image::get_pixels()
-{
+const std::vector<uint8_t> &Image::get_pixels() {
     return pixels;
 }
 
-DimensionsError::DimensionsError(const std::string &e) : invalid_argument(e) {}
+DimensionsError::DimensionsError(const std::string &e) : invalid_argument(e) {
+}

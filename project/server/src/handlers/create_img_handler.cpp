@@ -1,26 +1,27 @@
 #include "create_img_handler.h"
-
-#include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/Net/HTTPServerRequest.h"
-
-#include "image_tools.h"
+#include "Poco/Net/HTTPServerResponse.h"
 #include "common_handler.h"
+#include "image_tools.h"
 
 using namespace charta;
 using namespace Poco::Net;
 
 namespace {
-    uint64_t get_unique_id() {
-        static uint64_t id = 0;
-        return id++;
-    }
+uint64_t get_unique_id() {
+    static uint64_t id = 0;
+    return id++;
+}
+}  // namespace
+
+CreateImageHandler::CreateImageHandler(Poco::URI uri,
+                                       ChartographerApplication &app)
+    : uri_(std::move(uri)), app_(app) {
 }
 
-CreateImageHandler::CreateImageHandler(Poco::URI uri, ChartographerApplication &app)
-        : uri_(std::move(uri)), app_(app) {}
-
-void charta::CreateImageHandler::handleRequest([[maybe_unused]] Poco::Net::HTTPServerRequest &request,
-                                               Poco::Net::HTTPServerResponse &response) {
+void charta::CreateImageHandler::handleRequest(
+    [[maybe_unused]] Poco::Net::HTTPServerRequest &request,
+    Poco::Net::HTTPServerResponse &response) {
     using std::string;
     using std::vector;
 
@@ -28,13 +29,12 @@ void charta::CreateImageHandler::handleRequest([[maybe_unused]] Poco::Net::HTTPS
     size_t height = -1;
 
     try {
-        auto[height_s, width_s] = get_dimensions(uri_);
+        auto [height_s, width_s] = get_dimensions(uri_);
         height = strtoul(height_s.c_str(), nullptr, 10);
         width = strtoul(width_s.c_str(), nullptr, 10);
     } catch (...) {
         response.setStatus(HTTPResponse::HTTP_BAD_REQUEST);
     }
-
 
     try {
         uint64_t id = get_unique_id();

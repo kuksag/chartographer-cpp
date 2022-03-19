@@ -1,4 +1,4 @@
-﻿#include "chartographer_application.h"
-#include <iostream>
+﻿#include <iostream>
+#include "chartographer_application.h"
 
 POCO_SERVER_MAIN(charta::ChartographerApplication);
