@@ -10,8 +10,6 @@
 
 using namespace charta::ImageTools;
 
-uint64_t Image::unique_id = 0;
-
 Image::Image(size_t height_, size_t width_) : height(height_), width(width_) {
     if (!(0 < height && height <= MAX_HEIGHT) ||
         !(0 < width && width <= MAX_WIDTH)) {
@@ -24,8 +22,8 @@ Image::Image(size_t height_, size_t width_) : height(height_), width(width_) {
     }
 }
 
-void Image::dump(std::string_view filename) {
-    if (!stbi_write_bmp(filename.data(), width, height, RGB_CHANELLS_NO, pixels.data())) {
+void Image::dump(const std::filesystem::path &filename) {
+    if (!stbi_write_bmp(filename.c_str(), width, height, RGB_CHANELLS_NO, pixels.data())) {
         throw DumpError();
     }
 }

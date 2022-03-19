@@ -4,6 +4,7 @@
 #include <string>
 #include <exception>
 #include <vector>
+#include <filesystem>
 
 namespace charta::ImageTools {
     enum {
@@ -29,12 +30,10 @@ namespace charta::ImageTools {
 
         std::vector<uint8_t> pixels;
 
-        static uint64_t unique_id;
-
     public:
         Image(size_t height, size_t width);
 
-        void dump(std::string_view filename);
+        void dump(const std::filesystem::path &filename);
 
         const std::vector<uint8_t> &get_pixels();
     };
