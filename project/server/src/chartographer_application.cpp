@@ -30,7 +30,7 @@ void ChartographerApplication::initialize(Application& app)
 int ChartographerApplication::main(const std::vector<std::string>& args)
 {
 	ServerSocket socket{ 8080 };
-	HTTPServer server{ new HandlerFactory{working_folder_}, socket, new HTTPServerParams{} };
+	HTTPServer server{ new HandlerFactory{*this}, socket, new HTTPServerParams{} };
 	server.start();
 	waitForTerminationRequest();
 	server.stop();
@@ -42,4 +42,28 @@ void ChartographerApplication::handle_working_folder(const std::string& name, co
 {
 	working_folder_ = value;
 }
+
+const std::filesystem::path &ChartographerApplication::get_working_folder() {
+    return working_folder_;
+}
+
+bool ChartographerApplication::is_present_id(uint64_t id) {
+    return present_objects.find(id) != present_objects.end();
+}
+
+void ChartographerApplication::insert_id(uint64_t id) {
+    present_objects.insert(id);
+}
+
+bool ChartographerApplication::atomic_delete_id(uint64_t id) {
+    auto it = present_objects.find(id);
+    if (it != present_objects.end()) {
+        present_objects.erase(it);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 

@@ -1,14 +1,16 @@
 ﻿#pragma once
 #include "Poco/Net/HTTPRequestHandlerFactory.h"
+#include "chartographer_application.h"
 #include <filesystem>
+#include <unordered_set>
 
 namespace charta
 {
 	class HandlerFactory : public Poco::Net::HTTPRequestHandlerFactory
 	{
-        std::filesystem::path working_folder_;
+        ChartographerApplication &app_;
 	public:
-        explicit HandlerFactory(std::filesystem::path working_folder);
+        explicit HandlerFactory(ChartographerApplication &app);
 		Poco::Net::HTTPRequestHandler* createRequestHandler(const Poco::Net::HTTPServerRequest& request) override;
 	};
 }

@@ -2,6 +2,7 @@
 #include "Poco/Net/HTTPRequestHandler.h"
 #include "Poco/URI.h"
 #include "image_tools.h"
+#include "chartographer_application.h"
 
 namespace charta
 {
@@ -9,10 +10,10 @@ namespace charta
     {
     private:
         Poco::URI uri_;
-        std::filesystem::path folder_path_;
+        ChartographerApplication &app_;
 
     public:
-        CreateImageHandler(Poco::URI uri, std::filesystem::path folder_path);
+        explicit CreateImageHandler(Poco::URI uri, ChartographerApplication &app);
 
         void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) override;
     };
