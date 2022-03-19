@@ -7,7 +7,7 @@ TEST_CASE("Create common image", "[create_image]") {
     int height = 10;
     int width = 10;
     ImageTools::Image image(height, width);
-    CHECK(image.get_pixels() == std::vector<uint8_t>(height * width * 3, 0));
+    CHECK(image.get_pixels() == std::vector<ImageTools::Pixel>(height * width));
 }
 
 TEST_CASE("Create image with bad bounds", "[create_image]") {

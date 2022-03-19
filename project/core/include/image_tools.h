@@ -22,18 +22,36 @@ struct DumpError : std::system_error {};
 
 struct CreationError : std::bad_alloc {};
 
-class Image {
-    size_t height;
-    size_t width;
+#pragma pack(push, 1)
+struct Pixel {
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+    bool operator==(const Pixel &other) const;
+};
+#pragma pack(pop)
 
-    std::vector<uint8_t> pixels;
+class Image {
+    size_t height_;
+    size_t width_;
+
+    std::vector<Pixel> pixels_;
 
 public:
     Image(size_t height, size_t width);
+    Image(size_t height, size_t width, std::vector<Pixel> pixels);
 
-    void dump(const std::filesystem::path &filename);
+    void dump(const std::filesystem::path &filename) const;
 
-    const std::vector<uint8_t> &get_pixels();
+    [[nodiscard]] const std::vector<Pixel> &get_pixels() const;
+
+    static bool check_dimensions(size_t height, size_t width);
+
+    [[nodiscard]] Image crop(size_t x,
+                             size_t y,
+                             size_t other_height,
+                             size_t other_width) const;
+    [[nodiscard]] bool contain_point(size_t x, size_t y) const;
 };
 
 }  // namespace charta::ImageTools
