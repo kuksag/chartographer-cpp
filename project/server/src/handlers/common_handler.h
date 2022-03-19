@@ -18,6 +18,6 @@ std::string get_id(const Poco::URI &uri);
 
 std::unordered_map<std::string, std::string> get_uri_arguments(
     const Poco::URI &uri);
-std::unordered_map<std::string, std::string> enrich_arguments(
+std::unordered_map<std::string, size_t> enrich_arguments(
     const Poco::URI &uri, const std::vector<std::string> &expected);
 }  // namespace charta

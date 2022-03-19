@@ -7,3 +7,4 @@ AllowShortBlocksOnASingleLine: false
 AllowShortFunctionsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
+ColumnLimit: 70

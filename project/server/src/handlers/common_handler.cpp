@@ -22,19 +22,19 @@ std::unordered_map<std::string, std::string> get_uri_arguments(
     return result;
 }
 
-std::unordered_map<std::string, std::string> enrich_arguments(
+std::unordered_map<std::string, size_t> enrich_arguments(
     const Poco::URI &uri,
     const std::vector<std::string> &expected) {
     using std::string;
-    std::unordered_map<string, string> result;
+    std::unordered_map<string, size_t> result;
 
     auto args = get_uri_arguments(uri);
     for (const string &key : expected) {
         auto it = args.find(key);
         if (it != args.end()) {
-            result.emplace(*it);
+            result.emplace(key, strtoul(it->second.c_str(), nullptr, 10));
         } else {
-            result.emplace(key, "");
+            throw;
         }
     }
 

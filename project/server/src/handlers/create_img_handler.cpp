@@ -18,13 +18,9 @@ void charta::CreateImageHandler::handleRequest(
     using std::string;
     using std::vector;
 
-    size_t width = -1;
-    size_t height = -1;
-
+    std::unordered_map<string, size_t> args;
     try {
-        auto args = enrich_arguments(uri_, {HEIGHT, WIDTH});
-        height = strtoul(args[HEIGHT].c_str(), nullptr, 10);
-        width = strtoul(args[WIDTH].c_str(), nullptr, 10);
+        args = enrich_arguments(uri_, {HEIGHT, WIDTH});
     } catch (...) {
         response.setStatus(HTTPResponse::HTTP_BAD_REQUEST);
     }
@@ -33,7 +29,7 @@ void charta::CreateImageHandler::handleRequest(
         uint64_t id = ImageTools::gen_unique_id();
         std::filesystem::path name = std::to_string(id) + BMP_EXT;
 
-        ImageTools::Image image(height, width);
+        ImageTools::Image image(args[HEIGHT], args[WIDTH]);
         image.dump(app_.get_working_folder() / name);
 
         app_.insert_id(id);
