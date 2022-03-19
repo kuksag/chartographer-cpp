@@ -6,25 +6,28 @@
 #include <vector>
 #include <filesystem>
 
-namespace charta::ImageTools {
-    enum {
+namespace charta::ImageTools
+{
+    enum
+    {
         MAX_HEIGHT = 20'000,
         MAX_WIDTH = 50'000,
 
         RGB_CHANELLS_NO = 3,
     };
 
-    struct DimensionsError : std::exception {
+    struct DimensionsError : std::invalid_argument
+    {
+        explicit DimensionsError(const std::string &);
     };
 
-    struct DumpError : std::exception {
-    };
+    struct DumpError : std::system_error {};
 
-    struct CreationError : std::exception {
-    };
+    struct CreationError : std::bad_alloc {};
 
 
-    class Image {
+    class Image
+    {
         size_t height;
         size_t width;
 
