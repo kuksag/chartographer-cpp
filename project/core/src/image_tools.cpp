@@ -8,7 +8,12 @@
 
 #include "stb_image_write.h"
 
-using namespace charta::ImageTools;
+namespace charta::ImageTools {
+
+uint64_t gen_unique_id() {
+    static uint64_t id = 0;
+    return id++;
+}
 
 Image::Image(size_t height, size_t width) : height_(height), width_(width) {
     if (!check_dimensions(height_, width_)) {
@@ -29,10 +34,20 @@ Image::Image(size_t height, size_t width, std::vector<Pixel> pixels)
     }
 }
 
+Image::Image(const std::filesystem::path &path) {
+    auto *img = reinterpret_cast<Pixel *>(
+        stbi_load(path.c_str(), reinterpret_cast<int *>(&width_),
+                  reinterpret_cast<int *>(&height_), nullptr, RGB_CHANELLS_NO));
+    if (img == nullptr) {
+        throw IOError();
+    }
+    pixels_ = std::vector<Pixel>(img, img + width_ * height_);
+}
+
 void Image::dump(const std::filesystem::path &filename) const {
     if (!stbi_write_bmp(filename.c_str(), width_, height_, RGB_CHANELLS_NO,
                         pixels_.data())) {
-        throw DumpError();
+        throw IOError();
     }
 }
 
@@ -79,7 +94,6 @@ bool Image::contain_point(size_t x, size_t y) const {
 }
 
 bool Pixel::operator==(const Pixel &other) const {
-    return red == other.red &&
-           green == other.green
-           && blue == other.blue;
+    return red == other.red && green == other.green && blue == other.blue;
 }
+}  // namespace charta::ImageTools

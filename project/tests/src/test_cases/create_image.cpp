@@ -24,5 +24,5 @@ TEST_CASE("Create image with bad bounds", "[create_image]") {
 TEST_CASE("Dump image", "[create_image]") {
     ImageTools::Image image(10, 10);
     image.dump("temp.bmp");
-    CHECK_THROWS_AS(image.dump("/perms_denied.bmp"), ImageTools::DumpError);
+    CHECK_THROWS_AS(image.dump("/perms_denied.bmp"), ImageTools::IOError);
 }

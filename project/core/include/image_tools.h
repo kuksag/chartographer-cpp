@@ -7,6 +7,7 @@
 #include <vector>
 
 namespace charta::ImageTools {
+
 enum {
     MAX_HEIGHT = 20'000,
     MAX_WIDTH = 50'000,
@@ -14,11 +15,13 @@ enum {
     RGB_CHANELLS_NO = 3,
 };
 
+uint64_t gen_unique_id();
+
 struct DimensionsError : std::invalid_argument {
     explicit DimensionsError(const std::string &);
 };
 
-struct DumpError : std::system_error {};
+struct IOError : std::system_error {};
 
 struct CreationError : std::bad_alloc {};
 
@@ -32,14 +35,15 @@ struct Pixel {
 #pragma pack(pop)
 
 class Image {
-    size_t height_;
-    size_t width_;
+    size_t height_{};
+    size_t width_{};
 
     std::vector<Pixel> pixels_;
 
 public:
     Image(size_t height, size_t width);
     Image(size_t height, size_t width, std::vector<Pixel> pixels);
+    explicit Image(const std::filesystem::path &path);
 
     void dump(const std::filesystem::path &filename) const;
 

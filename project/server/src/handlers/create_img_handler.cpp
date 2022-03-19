@@ -7,20 +7,13 @@
 using namespace charta;
 using namespace Poco::Net;
 
-namespace {
-uint64_t get_unique_id() {
-    static uint64_t id = 0;
-    return id++;
-}
-}  // namespace
-
 CreateImageHandler::CreateImageHandler(Poco::URI uri,
                                        ChartographerApplication &app)
     : uri_(std::move(uri)), app_(app) {
 }
 
 void charta::CreateImageHandler::handleRequest(
-    [[maybe_unused]] Poco::Net::HTTPServerRequest &request,
+    Poco::Net::HTTPServerRequest &,
     Poco::Net::HTTPServerResponse &response) {
     using std::string;
     using std::vector;
@@ -29,15 +22,15 @@ void charta::CreateImageHandler::handleRequest(
     size_t height = -1;
 
     try {
-        auto [height_s, width_s] = get_dimensions(uri_);
-        height = strtoul(height_s.c_str(), nullptr, 10);
-        width = strtoul(width_s.c_str(), nullptr, 10);
+        auto args = enrich_arguments(uri_, {HEIGHT, WIDTH});
+        height = strtoul(args[HEIGHT].c_str(), nullptr, 10);
+        width = strtoul(args[WIDTH].c_str(), nullptr, 10);
     } catch (...) {
         response.setStatus(HTTPResponse::HTTP_BAD_REQUEST);
     }
 
     try {
-        uint64_t id = get_unique_id();
+        uint64_t id = ImageTools::gen_unique_id();
         std::filesystem::path name = std::to_string(id) + BMP_EXT;
 
         ImageTools::Image image(height, width);

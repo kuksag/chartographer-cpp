@@ -1,8 +1,10 @@
 ﻿#include "handlers/handler_factory.h"
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/URI.h"
+#include "common_handler.h"
 #include "create_img_handler.h"
 #include "delete_img_handler.h"
+#include "get_img_handler.h"
 #include "handlers/not_found_handler.h"
 
 using namespace charta;
@@ -15,8 +17,6 @@ Poco::Net::HTTPRequestHandler *HandlerFactory::createRequestHandler(
     const HTTPServerRequest &request) {
     using std::string;
     using std::vector;
-
-    static const string CHARTAS_METHOD = "chartas";
 
     Poco::URI uri{request.getURI()};
     vector<string> segments;
@@ -33,6 +33,7 @@ Poco::Net::HTTPRequestHandler *HandlerFactory::createRequestHandler(
 
     if (segments.size() == 2 && segments.front() == CHARTAS_METHOD &&
         request.getMethod() == HTTPRequest::HTTP_GET) {
+        return new GetImageHandler(uri, app_);
     }
 
     if (segments.size() == 2 && segments.front() == CHARTAS_METHOD &&

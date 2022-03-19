@@ -28,8 +28,7 @@ void charta::DeleteImageHandler::handleRequest(
 
     if (app_.atomic_delete_id(id)) {
         try {
-            if (!remove(app_.get_working_folder() /
-                        (std::to_string(id) + BMP_EXT))) {
+            if (!remove(app_.get_working_folder() / (id_s + BMP_EXT))) {
                 throw;
             }
             response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
