@@ -11,23 +11,6 @@ charta::GetImageHandler::GetImageHandler(Poco::URI uri,
 using namespace charta;
 using namespace Poco::Net;
 
-namespace {
-class AutoDeleteFile {
-    const std::filesystem::path &file_path_;
-
-public:
-    explicit AutoDeleteFile(const std::filesystem::path &file_path)
-        : file_path_(file_path) {}
-
-    ~AutoDeleteFile() {
-        try {
-            remove(file_path_);
-        } catch (...) {
-        }
-    }
-};
-}  // namespace
-
 void charta::GetImageHandler::handleRequest(
     Poco::Net::HTTPServerRequest &,
     Poco::Net::HTTPServerResponse &response) {
@@ -55,11 +38,16 @@ void charta::GetImageHandler::handleRequest(
                 app_.get_working_folder() /
                 (ImageTools::gen_unique_id() + BMP_EXT);
 
-            AutoDeleteFile autoDeleteFile(temp_path);
-            image.crop(args[X_FIELD], args[Y_FIELD], args[HEIGHT], args[WIDTH])
-                .dump(temp_path);
-
-            response.sendFile(temp_path, IMAGE_MEDIA_TYPE);
+            try {
+                image
+                    .crop(args[X_FIELD], args[Y_FIELD], args[HEIGHT],
+                          args[WIDTH])
+                    .dump(temp_path);
+                response.sendFile(temp_path, IMAGE_MEDIA_TYPE);
+            } catch (std::exception &e) {
+                remove(temp_path);
+                throw e;
+            }
             response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
             return;
         } catch (Poco::InvalidArgumentException &) {
