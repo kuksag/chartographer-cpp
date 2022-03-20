@@ -31,7 +31,7 @@ std::unordered_map<std::string, int> enrich_arguments(
     for (const string &key : expected) {
         auto it = args.find(key);
         if (it != args.end()) {
-            result.emplace(key, strtoul(it->second.c_str(), nullptr, 10));
+            result.emplace(key, std::stoul(it->second));
         } else {
             throw Poco::InvalidArgumentException();
         }

@@ -23,7 +23,7 @@ void UpdateImageHandler::handleRequest(HTTPServerRequest &request,
     std::unordered_map<string, int> args;
 
     try {
-        id = strtoul(id_s.c_str(), nullptr, 10);
+        id = std::stoul(id_s);
         if (!app_.is_present_id(id)) {
             throw Poco::NotFoundException();
         }

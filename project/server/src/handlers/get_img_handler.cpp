@@ -21,7 +21,7 @@ void charta::GetImageHandler::handleRequest(
     size_t id;
     std::unordered_map<string, int> args;
     try {
-        id = strtoul(id_s.c_str(), nullptr, 10);
+        id = std::stoul(id_s);
         args = enrich_arguments(uri_, {X_FIELD, Y_FIELD, WIDTH, HEIGHT});
     } catch (...) {
         response.setStatus(HTTPResponse::HTTP_BAD_REQUEST);
