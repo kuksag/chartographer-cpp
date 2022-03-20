@@ -25,8 +25,10 @@ void ChartographerApplication::initialize(Application &app) {
     // ADVICE: Nice place to make some preparations before running the server.
 }
 
-int ChartographerApplication::main(const std::vector<std::string> &) {
-    ServerSocket socket{8080};
+int ChartographerApplication::main(
+    [[maybe_unused]] const std::vector<std::string> &args) {
+    const int WEB_SERVER_PORT = 8080;
+    ServerSocket socket{WEB_SERVER_PORT};
     HTTPServer server{new HandlerFactory{accumulator}, socket,
                       new HTTPServerParams{}};
     server.start();
@@ -36,7 +38,8 @@ int ChartographerApplication::main(const std::vector<std::string> &) {
     return ExitCode::EXIT_OK;
 }
 
-void ChartographerApplication::handle_working_folder(const std::string &,
-                                                     const std::string &value) {
+void ChartographerApplication::handle_working_folder(
+    [[maybe_unused]] const std::string &name,
+    const std::string &value) {
     accumulator.set_working_directory(value);
 }

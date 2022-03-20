@@ -12,7 +12,7 @@ CreateImageHandler::CreateImageHandler(Poco::URI uri,
     : uri_(std::move(uri)), accumulator(accumulator_) {}
 
 void charta::CreateImageHandler::handleRequest(
-    Poco::Net::HTTPServerRequest &,
+    [[maybe_unused]] Poco::Net::HTTPServerRequest &request,
     Poco::Net::HTTPServerResponse &response) {
     using std::string;
     using std::vector;

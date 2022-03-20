@@ -13,7 +13,7 @@ charta::DeleteImageHandler::DeleteImageHandler(
     : uri_(std::move(uri)), accumulator(accumulator_) {}
 
 void charta::DeleteImageHandler::handleRequest(
-    Poco::Net::HTTPServerRequest &,
+    [[maybe_unused]] Poco::Net::HTTPServerRequest &request,
     Poco::Net::HTTPServerResponse &response) {
     using std::string;
 
@@ -28,11 +28,13 @@ void charta::DeleteImageHandler::handleRequest(
     }
 
     try {
-        response.setStatusAndReason(accumulator.delete_object(id)
-                               ? Poco::Net::HTTPResponse::HTTP_OK
-                               : Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
+        response.setStatusAndReason(
+            accumulator.delete_object(id)
+                ? Poco::Net::HTTPResponse::HTTP_OK
+                : Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
     } catch (...) {
-        response.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setStatusAndReason(
+            Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     response.send();

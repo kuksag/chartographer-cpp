@@ -45,10 +45,7 @@ bool Accumulator::Accumulator::delete_object(uint64_t id) {
 bool Accumulator::Accumulator::exist(uint64_t id) {
     std::shared_lock lock(mutex_id_path);
     auto it = id_path.find(id);
-    if (it == id_path.end()) {
-        return false;
-    }
-    return true;
+    return it != id_path.end();
 }
 
 std::shared_mutex &Accumulator::Accumulator::get_mutex(uint64_t id) {

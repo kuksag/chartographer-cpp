@@ -13,7 +13,7 @@ using namespace charta;
 using namespace Poco::Net;
 
 void charta::GetImageHandler::handleRequest(
-    Poco::Net::HTTPServerRequest &,
+    [[maybe_unused]] Poco::Net::HTTPServerRequest &request,
     Poco::Net::HTTPServerResponse &response) {
     using std::string;
     using std::vector;
@@ -58,7 +58,8 @@ void charta::GetImageHandler::handleRequest(
     } catch (Poco::InvalidArgumentException &) {
         response.setStatusAndReason(HTTPResponse::HTTP_BAD_REQUEST);
     } catch (...) {
-        response.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setStatusAndReason(
+            Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
     response.send();
 }
