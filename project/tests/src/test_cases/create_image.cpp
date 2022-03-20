@@ -11,18 +11,18 @@ TEST_CASE("Create common image", "[create_image]") {
 }
 
 TEST_CASE("Create image with bad bounds", "[create_image]") {
-    CHECK_THROWS_AS(ImageTools::Image(1e9, 10), ImageTools::DimensionsError);
-    CHECK_THROWS_AS(ImageTools::Image(10, 1e9), ImageTools::DimensionsError);
+    CHECK_THROWS(ImageTools::Image(1e9, 10));
+    CHECK_THROWS(ImageTools::Image(10, 1e9));
 
-    CHECK_THROWS_AS(ImageTools::Image(-10, 10), ImageTools::DimensionsError);
-    CHECK_THROWS_AS(ImageTools::Image(10, -10), ImageTools::DimensionsError);
+    CHECK_THROWS(ImageTools::Image(-10, 10));
+    CHECK_THROWS(ImageTools::Image(10, -10));
 
-    CHECK_THROWS_AS(ImageTools::Image(0, 10), ImageTools::DimensionsError);
-    CHECK_THROWS_AS(ImageTools::Image(10, 0), ImageTools::DimensionsError);
+    CHECK_THROWS(ImageTools::Image(0, 10));
+    CHECK_THROWS(ImageTools::Image(10, 0));
 }
 
 TEST_CASE("Dump image", "[create_image]") {
     ImageTools::Image image(10, 10);
     image.dump("temp.bmp");
-    CHECK_THROWS_AS(image.dump("/perms_denied.bmp"), ImageTools::IOError);
+    CHECK_THROWS(image.dump("/perms_denied.bmp"));
 }

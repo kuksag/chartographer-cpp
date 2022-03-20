@@ -1,29 +1,19 @@
 #pragma once
 
 #include <cstdint>
-#include <exception>
 #include <filesystem>
 #include <string>
 #include <vector>
+#include "exceptions.h"
 
 namespace charta::ImageTools {
 
 enum {
     MAX_HEIGHT = 20'000,
     MAX_WIDTH = 50'000,
-
-    RGB_CHANELLS_NO = 3,
 };
 
 uint64_t gen_unique_id();
-
-struct DimensionsError : std::invalid_argument {
-    explicit DimensionsError(const std::string &);
-};
-
-struct IOError : std::system_error {};
-
-struct CreationError : std::bad_alloc {};
 
 #pragma pack(push, 1)
 struct Pixel {
@@ -35,27 +25,33 @@ struct Pixel {
 #pragma pack(pop)
 
 class Image {
-    size_t height_{};
-    size_t width_{};
+    int height_{};
+    int width_{};
 
     std::vector<Pixel> pixels_;
 
+    void check_dimensions_or_throw() const;
+    void check_pixels_or_throw() const;
 public:
-    Image(size_t height, size_t width);
-    Image(size_t height, size_t width, std::vector<Pixel> pixels);
+    Image(int height, int width);
+    Image(int height, int width, std::vector<Pixel> pixels);
     explicit Image(const std::filesystem::path &path);
+    explicit Image(std::istream &is);
 
     void dump(const std::filesystem::path &filename) const;
 
     [[nodiscard]] const std::vector<Pixel> &get_pixels() const;
 
-    static bool check_dimensions(size_t height, size_t width);
+    static void check_dimensions_or_throw(int height, int width);
+    static void check_pixels_or_throw(
+        const std::vector<Pixel> &pixels,
+        int height,
+        int width);
 
-    [[nodiscard]] Image crop(size_t x,
-                             size_t y,
-                             size_t other_height,
-                             size_t other_width) const;
-    [[nodiscard]] bool contain_point(size_t x, size_t y) const;
+    [[nodiscard]] Image crop(int x,
+                             int y,
+                             int other_height,
+                             int other_width) const;
 };
 
 }  // namespace charta::ImageTools
