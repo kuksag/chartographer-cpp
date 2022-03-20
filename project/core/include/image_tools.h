@@ -32,6 +32,7 @@ class Image {
 
     void check_dimensions_or_throw() const;
     void check_pixels_or_throw() const;
+
 public:
     Image(int height, int width);
     Image(int height, int width, std::vector<Pixel> pixels);
@@ -43,15 +44,20 @@ public:
     [[nodiscard]] const std::vector<Pixel> &get_pixels() const;
 
     static void check_dimensions_or_throw(int height, int width);
-    static void check_pixels_or_throw(
-        const std::vector<Pixel> &pixels,
-        int height,
-        int width);
+    static void check_pixels_or_throw(const std::vector<Pixel> &pixels,
+                                      int height,
+                                      int width);
 
-    [[nodiscard]] Image crop(int x,
-                             int y,
+    [[nodiscard]] Image crop(int row,
+                             int col,
                              int other_height,
                              int other_width) const;
+
+    Pixel &at(size_t row, size_t col) noexcept;
+    [[nodiscard]] const Pixel &at(size_t row, size_t col) const noexcept;
+
+    [[nodiscard]] bool contains(size_t row, size_t col) const noexcept;
+    void overwrite(const Image &other_image, int row, int col);
 };
 
 }  // namespace charta::ImageTools

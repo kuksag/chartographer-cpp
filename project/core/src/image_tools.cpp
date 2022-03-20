@@ -38,9 +38,9 @@ Image::Image(int height, int width, std::vector<Pixel> pixels)
 }
 
 Image::Image(const std::filesystem::path &path) {
-    auto *img = reinterpret_cast<Pixel *>(stbi_load(
-        path.c_str(), reinterpret_cast<int *>(&width_),
-        reinterpret_cast<int *>(&height_), nullptr, STBI_rgb));
+    auto *img = reinterpret_cast<Pixel *>(
+        stbi_load(path.c_str(), reinterpret_cast<int *>(&width_),
+                  reinterpret_cast<int *>(&height_), nullptr, STBI_rgb));
     if (img == nullptr) {
         throw;
     }
@@ -51,9 +51,8 @@ Image::Image(const std::filesystem::path &path) {
 
 Image::Image(std::istream &is) {
     auto data = exhaust_stream(is);
-    auto *img = reinterpret_cast<Pixel *>(
-        stbi_load_from_memory(data.data(), data.size(), &width_,
-                              &height_, nullptr, STBI_rgb));
+    auto *img = reinterpret_cast<Pixel *>(stbi_load_from_memory(
+        data.data(), data.size(), &width_, &height_, nullptr, STBI_rgb));
     if (img == nullptr) {
         throw;
     }
@@ -71,8 +70,8 @@ void Image::check_pixels_or_throw(const std::vector<Pixel> &pixels,
 }
 
 void Image::check_dimensions_or_throw(int height, int width) {
-    bool flag = 0 < abs(height) && abs(height) < MAX_HEIGHT &&
-                0 < abs(width) && abs(width) < MAX_WIDTH;
+    bool flag = 0 < abs(height) && abs(height) < MAX_HEIGHT && 0 < abs(width) &&
+                abs(width) < MAX_WIDTH;
     if (!flag) {
         throw DimensionsError();
     }
@@ -96,37 +95,58 @@ void Image::dump(const std::filesystem::path &filename) const {
 const std::vector<Pixel> &Image::get_pixels() const {
     return pixels_;
 }
-Image Image::crop(int x,
-                  int y,
-                  int other_height,
-                  int other_width) const {
+
+Pixel &Image::at(size_t row, size_t col) noexcept {
+    size_t ptr = col + row * width_;
+    return pixels_[ptr];
+}
+
+const Pixel &Image::at(size_t row, size_t col) const noexcept {
+    size_t ptr = col + row * width_;
+    return pixels_[ptr];
+}
+
+Image Image::crop(int row, int col, int other_height, int other_width) const {
     check_dimensions_or_throw(other_height, other_width);
 
-    x = std::max(0, x);
-    y = std::max(0, y);
+    row = std::max(0, row);
+    col = std::max(0, col);
     other_height = abs(other_height);
     other_width = abs(other_width);
-    int height_bound = std::min(abs(height_), x + other_height);
-    int width_bound = std::min(abs(width_), y + other_width);
-    other_height = height_bound - x;
-    other_width = width_bound - y;
+    int height_bound = std::min(abs(height_), row + other_height);
+    int width_bound = std::min(abs(width_), col + other_width);
+    other_height = height_bound - row;
+    other_width = width_bound - col;
 
     size_t size = other_height * other_width;
     std::vector<Pixel> other_pixels;
     other_pixels.reserve(size);
 
-    for (size_t row = x; row < static_cast<size_t>(height_bound); row++) {
-        for (size_t col = y; col < static_cast<size_t>(width_bound); col++) {
-            size_t ptr = col + row * width_;
-            other_pixels.push_back(pixels_[ptr]);
+    for (size_t i = row; i < static_cast<size_t>(height_bound); i++) {
+        for (size_t j = col; j < static_cast<size_t>(width_bound); j++) {
+            other_pixels.push_back(this->at(i, j));
         }
     }
 
     return {other_height, other_width, other_pixels};
 }
 
+void Image::overwrite(const Image &other_image, int row, int col) {
+    for (size_t i = 0; i < static_cast<size_t>(other_image.height_); i++) {
+        for (size_t j = 0; j < static_cast<size_t>(other_image.width_); j++) {
+            if (this->contains(row + i, col + j)) {
+                this->at(row + i, col + j) = other_image.at(i, j);
+            }
+        }
+    }
+}
+
+bool Image::contains(size_t row, size_t col) const noexcept {
+    return row < static_cast<size_t>(abs(height_)) &&
+           col < static_cast<size_t>(abs(width_));
+}
+
 bool Pixel::operator==(const Pixel &other) const {
-    return red == other.red && green == other.green &&
-           blue == other.blue;
+    return red == other.red && green == other.green && blue == other.blue;
 }
 }  // namespace charta::ImageTools
