@@ -36,8 +36,7 @@ void charta::DeleteImageHandler::handleRequest(
             response.setStatus(Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
         }
     } catch (...) {
-        response.setStatus(
-            Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     response.send();

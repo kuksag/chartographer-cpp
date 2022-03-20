@@ -11,9 +11,7 @@
 using namespace charta;
 using namespace Poco::Net;
 
-HandlerFactory::HandlerFactory(ChartographerApplication &app)
-    : app_(app) {
-}
+HandlerFactory::HandlerFactory(ChartographerApplication &app) : app_(app) {}
 
 Poco::Net::HTTPRequestHandler *HandlerFactory::createRequestHandler(
     const HTTPServerRequest &request) {

@@ -6,8 +6,8 @@
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
-#include "stb_image_write.h"
 #include "Poco/Exception.h"
+#include "stb_image_write.h"
 
 namespace charta::ImageTools {
 

@@ -11,11 +11,9 @@ private:
     ChartographerApplication &app_;
 
 public:
-    explicit UpdateImageHandler(Poco::URI uri,
-                                ChartographerApplication &app);
+    explicit UpdateImageHandler(Poco::URI uri, ChartographerApplication &app);
 
-    void handleRequest(
-        Poco::Net::HTTPServerRequest &request,
-        Poco::Net::HTTPServerResponse &response) override;
+    void handleRequest(Poco::Net::HTTPServerRequest &request,
+                       Poco::Net::HTTPServerResponse &response) override;
 };
 }  // namespace charta

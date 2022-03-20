@@ -35,7 +35,8 @@ void UpdateImageHandler::handleRequest(HTTPServerRequest &request,
             throw Poco::InvalidArgumentException();
         }
 
-        std::filesystem::path path = app_.get_working_folder() / (id_s + BMP_EXT);
+        std::filesystem::path path =
+            app_.get_working_folder() / (id_s + BMP_EXT);
         ImageTools::Image image_to_edit(path);
 
         image_to_edit.overwrite(image_to_insert, args[X_FIELD], args[Y_FIELD]);

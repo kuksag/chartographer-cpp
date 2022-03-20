@@ -4,7 +4,7 @@
 using namespace charta;
 
 TEST_CASE("Crop simple image", "[crop_image]") {
-    typedef std::vector <charta::ImageTools::Pixel> pixelVector;
+    typedef std::vector<charta::ImageTools::Pixel> pixelVector;
 
     // 3 pixels:
     // [[RED], [GREEN], [BLUE]]
@@ -28,15 +28,11 @@ TEST_CASE("Crop simple image", "[crop_image]") {
 
     ImageTools::Image image(1, 3, pixels);
 
-    CHECK(red_pixel ==
-          image.crop(0, 0, 1, 1).get_pixels());
-    CHECK(green_pixel ==
-          image.crop(0, 1, 1, 1).get_pixels());
-    CHECK(blue_pixel ==
-          image.crop(0, 2, 1, 1).get_pixels());
+    CHECK(red_pixel == image.crop(0, 0, 1, 1).get_pixels());
+    CHECK(green_pixel == image.crop(0, 1, 1, 1).get_pixels());
+    CHECK(blue_pixel == image.crop(0, 2, 1, 1).get_pixels());
 
-    CHECK(image.get_pixels() ==
-          image.crop(0, 0, 1, 3).get_pixels());
+    CHECK(image.get_pixels() == image.crop(0, 0, 1, 3).get_pixels());
 }
 
 TEST_CASE("Crop with bad dimensions", "[crop_image]") {
@@ -48,7 +44,7 @@ TEST_CASE("Crop with bad dimensions", "[crop_image]") {
 }
 
 TEST_CASE("Crop with overhead arguments", "[crop_image]") {
-    typedef std::vector <charta::ImageTools::Pixel> pixelVector;
+    typedef std::vector<charta::ImageTools::Pixel> pixelVector;
 
     // 3 pixels:
     // [[RED], [GREEN], [BLUE]]
@@ -60,13 +56,10 @@ TEST_CASE("Crop with overhead arguments", "[crop_image]") {
 
     ImageTools::Image image(1, 3, pixels);
 
-    CHECK(image.get_pixels() ==
-          image.crop(0, 0, 1000, 1000).get_pixels());
-
+    CHECK(image.get_pixels() == image.crop(0, 0, 1000, 1000).get_pixels());
 
     CHECK(image.get_pixels() ==
           image.crop(-1000, -1000, 1000, 1000).get_pixels());
-
 
     CHECK(image.crop(0, 1, 1, 1).get_pixels() ==
           image.crop(-1000, 1, 1000, 1).get_pixels());
