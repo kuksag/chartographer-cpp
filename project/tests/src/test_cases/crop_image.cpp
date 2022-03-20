@@ -1,10 +1,9 @@
 #include "catch2/catch.hpp"
 #include "image_tools.h"
 
-using namespace charta;
 
 TEST_CASE("Crop simple image", "[crop_image]") {
-    typedef std::vector<charta::ImageTools::Pixel> pixelVector;
+    typedef std::vector<ImageTools::Pixel> pixelVector;
 
     // 3 pixels:
     // [[RED], [GREEN], [BLUE]]
@@ -44,7 +43,7 @@ TEST_CASE("Crop with bad dimensions", "[crop_image]") {
 }
 
 TEST_CASE("Crop with overhead arguments", "[crop_image]") {
-    typedef std::vector<charta::ImageTools::Pixel> pixelVector;
+    typedef std::vector<ImageTools::Pixel> pixelVector;
 
     // 3 pixels:
     // [[RED], [GREEN], [BLUE]]

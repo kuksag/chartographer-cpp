@@ -1,7 +1,6 @@
 #include "catch2/catch.hpp"
 #include "image_tools.h"
 
-using namespace charta;
 
 TEST_CASE("Create common image", "[create_image]") {
     int height = 10;

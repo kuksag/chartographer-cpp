@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace charta::ImageTools {
+namespace ImageTools {
 
 enum {
     MAX_HEIGHT = 20'000,

@@ -1,10 +1,8 @@
 #include "catch2/catch.hpp"
 #include "image_tools.h"
 
-using namespace charta;
-
 TEST_CASE("Paint from black to green", "[overwrite_image]") {
-    typedef std::vector<charta::ImageTools::Pixel> pixelVector;
+    typedef std::vector<ImageTools::Pixel> pixelVector;
 
     ImageTools::Pixel black_pixel = {
         0,
@@ -36,7 +34,7 @@ TEST_CASE("Paint from black to green", "[overwrite_image]") {
 }
 
 TEST_CASE("Simple overwrite", "[overwrite_image]") {
-    typedef std::vector<charta::ImageTools::Pixel> pixelVector;
+    typedef std::vector<ImageTools::Pixel> pixelVector;
 
     ImageTools::Pixel red_pixel{255, 0, 0};
     ImageTools::Pixel green_pixel{0, 255, 0};
@@ -63,7 +61,7 @@ TEST_CASE("Simple overwrite", "[overwrite_image]") {
 }
 
 TEST_CASE("Overwrite with no intersection", "[overwrite_image]") {
-    typedef std::vector<charta::ImageTools::Pixel> pixelVector;
+    typedef std::vector<ImageTools::Pixel> pixelVector;
 
     ImageTools::Pixel black_pixel{0, 0, 0};
     ImageTools::Pixel red_pixel{255, 0, 0};

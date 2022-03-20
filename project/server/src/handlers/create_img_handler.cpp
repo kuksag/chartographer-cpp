@@ -3,7 +3,7 @@
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
 #include "common_handler.h"
-#include "image_tools.h"
+
 using namespace charta;
 using namespace Poco::Net;
 

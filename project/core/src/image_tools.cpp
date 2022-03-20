@@ -9,7 +9,7 @@
 #include "Poco/Exception.h"
 #include "stb_image_write.h"
 
-namespace charta::ImageTools {
+namespace ImageTools {
 
 namespace {
 std::vector<uint8_t> exhaust_stream(std::istream &is) {
