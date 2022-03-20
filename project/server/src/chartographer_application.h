@@ -1,13 +1,12 @@
 ﻿#pragma once
 #include <filesystem>
-#include <unordered_set>
 #include "Poco/Util/ServerApplication.h"
+#include "accumulator.h"
 
 namespace charta {
 class ChartographerApplication final : public Poco::Util::ServerApplication {
 private:
-    std::filesystem::path working_folder_;
-    std::unordered_set<uint64_t> present_objects;
+    Accumulator::Accumulator accumulator;
 
     void defineOptions(Poco::Util::OptionSet &options) override;
     void initialize(Application &app) override;

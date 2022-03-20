@@ -12,7 +12,7 @@ enum {
     MAX_WIDTH = 50'000,
 };
 
-uint64_t gen_unique_id();
+static const char *const BMP_EXT = ".bmp";
 
 #pragma pack(push, 1)
 struct Pixel {

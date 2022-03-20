@@ -1,5 +1,4 @@
 #include "delete_img_handler.h"
-#include <filesystem>
 #include "Poco/Exception.h"
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
@@ -10,8 +9,8 @@ using namespace Poco::Net;
 
 charta::DeleteImageHandler::DeleteImageHandler(
     Poco::URI uri,
-    charta::ChartographerApplication &app)
-    : uri_(std::move(uri)), app_(app) {}
+    Accumulator::Accumulator &accumulator_)
+    : uri_(std::move(uri)), accumulator(accumulator_) {}
 
 void charta::DeleteImageHandler::handleRequest(
     Poco::Net::HTTPServerRequest &,
@@ -23,20 +22,17 @@ void charta::DeleteImageHandler::handleRequest(
     try {
         id = std::stoi(id_s);
     } catch (...) {
-        response.setStatus(HTTPResponse::HTTP_BAD_REQUEST);
+        response.setStatusAndReason(HTTPResponse::HTTP_BAD_REQUEST);
+        response.send();
+        return;
     }
 
     try {
-        if (app_.atomic_delete_id(id)) {
-            if (!remove(app_.get_working_folder() / (id_s + BMP_EXT))) {
-                throw;
-            }
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
-        } else {
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
-        }
+        response.setStatusAndReason(accumulator.delete_object(id)
+                               ? Poco::Net::HTTPResponse::HTTP_OK
+                               : Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
     } catch (...) {
-        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     response.send();

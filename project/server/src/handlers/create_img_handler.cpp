@@ -8,8 +8,8 @@ using namespace charta;
 using namespace Poco::Net;
 
 CreateImageHandler::CreateImageHandler(Poco::URI uri,
-                                       ChartographerApplication &app)
-    : uri_(std::move(uri)), app_(app) {}
+                                       Accumulator::Accumulator &accumulator_)
+    : uri_(std::move(uri)), accumulator(accumulator_) {}
 
 void charta::CreateImageHandler::handleRequest(
     Poco::Net::HTTPServerRequest &,
@@ -21,23 +21,22 @@ void charta::CreateImageHandler::handleRequest(
     try {
         args = enrich_arguments(uri_, {HEIGHT, WIDTH});
     } catch (...) {
-        response.setStatus(HTTPResponse::HTTP_BAD_REQUEST);
+        response.setStatusAndReason(HTTPResponse::HTTP_BAD_REQUEST);
+        response.send();
+        return;
     }
 
     try {
-        uint64_t id = ImageTools::gen_unique_id();
-        std::filesystem::path name = std::to_string(id) + BMP_EXT;
-
+        uint64_t id = accumulator.create_object();
         ImageTools::Image image(args[HEIGHT], args[WIDTH]);
-        image.dump(app_.get_working_folder() / name);
+        image.dump(accumulator.get_path(id));
 
-        app_.insert_id(id);
         response.add(ID, std::to_string(id));
-        response.setStatus(HTTPResponse::HTTP_CREATED);
+        response.setStatusAndReason(HTTPResponse::HTTP_CREATED);
     } catch (Poco::InvalidArgumentException &) {
-        response.setStatus(HTTPResponse::HTTP_BAD_REQUEST);
+        response.setStatusAndReason(HTTPResponse::HTTP_BAD_REQUEST);
     } catch (...) {
-        response.setStatus(HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setStatusAndReason(HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     response.send();

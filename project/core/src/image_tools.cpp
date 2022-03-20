@@ -22,11 +22,6 @@ std::vector<uint8_t> exhaust_stream(std::istream &is) {
 }
 }  // namespace
 
-uint64_t gen_unique_id() {
-    static uint64_t id = 0;
-    return id++;
-}
-
 Image::Image(int height, int width) : height_(height), width_(width) {
     check_dimensions_or_throw();
     pixels_.resize(height_ * width_);
@@ -166,8 +161,8 @@ bool rectangle_intersection(int x1, int y1, int w1, int h1,
         return std::max(l1, l2) <= std::min(r1, r2);
     };
     bool flag = true;
-    flag &= cut_intersect(x1, x1 + w1, x2, x2 + w2);
-    flag &= cut_intersect(y1, y1 + h1, y2, y2 + h2);
+    flag &= cut_intersect(x1, x1 + w1 - 1, x2, x2 + w2 - 1);
+    flag &= cut_intersect(y1, y1 + h1 - 1, y2, y2 + h2 - 1);
     return flag;
 }
 }  // namespace charta::ImageTools

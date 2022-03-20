@@ -11,7 +11,9 @@
 using namespace charta;
 using namespace Poco::Net;
 
-HandlerFactory::HandlerFactory(ChartographerApplication &app) : app_(app) {}
+HandlerFactory::HandlerFactory(Accumulator::Accumulator &accumulator_)
+    : accumulator(accumulator_) {}
+
 
 Poco::Net::HTTPRequestHandler *HandlerFactory::createRequestHandler(
     const HTTPServerRequest &request) {
@@ -24,22 +26,22 @@ Poco::Net::HTTPRequestHandler *HandlerFactory::createRequestHandler(
 
     if (segments.size() == 1 && segments.front() == CHARTAS_METHOD &&
         request.getMethod() == HTTPRequest::HTTP_POST) {
-        return new CreateImageHandler(uri, app_);
+        return new CreateImageHandler(uri, accumulator);
     }
 
     if (segments.size() == 2 && segments.front() == CHARTAS_METHOD &&
         request.getMethod() == HTTPRequest::HTTP_POST) {
-        return new UpdateImageHandler(uri, app_);
+        return new UpdateImageHandler(uri, accumulator);
     }
 
     if (segments.size() == 2 && segments.front() == CHARTAS_METHOD &&
         request.getMethod() == HTTPRequest::HTTP_GET) {
-        return new GetImageHandler(uri, app_);
+        return new GetImageHandler(uri, accumulator);
     }
 
     if (segments.size() == 2 && segments.front() == CHARTAS_METHOD &&
         request.getMethod() == HTTPRequest::HTTP_DELETE) {
-        return new DeleteImageHandler(uri, app_);
+        return new DeleteImageHandler(uri, accumulator);
     }
 
     return new NotFoundHandler{};

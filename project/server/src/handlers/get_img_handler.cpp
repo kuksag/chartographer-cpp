@@ -1,12 +1,13 @@
 #include "get_img_handler.h"
+#include <shared_mutex>
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
 #include "common_handler.h"
 #include "image_tools.h"
 
 charta::GetImageHandler::GetImageHandler(Poco::URI uri,
-                                         charta::ChartographerApplication &app)
-    : uri_(std::move(uri)), app_(app) {}
+                                         Accumulator::Accumulator &accumulator_)
+    : uri_(std::move(uri)), accumulator(accumulator_) {}
 
 using namespace charta;
 using namespace Poco::Net;
@@ -24,39 +25,40 @@ void charta::GetImageHandler::handleRequest(
         id = std::stoul(id_s);
         args = enrich_arguments(uri_, {X_FIELD, Y_FIELD, WIDTH, HEIGHT});
     } catch (...) {
-        response.setStatus(HTTPResponse::HTTP_BAD_REQUEST);
+        response.setStatusAndReason(HTTPResponse::HTTP_BAD_REQUEST);
+        response.send();
+        return;
     }
 
-    if (!app_.is_present_id(id)) {
-        response.setStatus(Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
-    } else {
+    std::shared_lock lock(accumulator.mutex_id_path);
+    if (!accumulator.exist(id)) {
+        response.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
+        response.send();
+        return;
+    }
+    std::shared_lock lock1(accumulator.get_mutex(id));
+
+    try {
+        auto path = accumulator.get_path(id);
+        ImageTools::Image image(path);
+
+        std::filesystem::path temp_path = string(path) + ".tmp";
+
         try {
-            ImageTools::Image image(app_.get_working_folder() /
-                                    (id_s + BMP_EXT));
-
-            std::filesystem::path temp_path =
-                app_.get_working_folder() /
-                (ImageTools::gen_unique_id() + BMP_EXT);
-
-            try {
-                image
-                    .crop(args[Y_FIELD], args[X_FIELD], args[HEIGHT],
-                          args[WIDTH])
-                    .dump(temp_path);
-                response.sendFile(temp_path, IMAGE_MEDIA_TYPE);
-            } catch (std::exception &e) {
-                remove(temp_path);
-                throw e;
-            }
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+            image.crop(args[Y_FIELD], args[X_FIELD], args[HEIGHT], args[WIDTH])
+                .dump(temp_path);
+            response.sendFile(temp_path, IMAGE_MEDIA_TYPE);
+            remove(temp_path);
+            response.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_OK);
             return;
-        } catch (Poco::InvalidArgumentException &) {
-            response.setStatus(HTTPResponse::HTTP_BAD_REQUEST);
-        } catch (...) {
-            response.setStatus(
-                Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (std::exception &e) {
+            remove(temp_path);
+            throw e;
         }
+    } catch (Poco::InvalidArgumentException &) {
+        response.setStatusAndReason(HTTPResponse::HTTP_BAD_REQUEST);
+    } catch (...) {
+        response.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
-
     response.send();
 }

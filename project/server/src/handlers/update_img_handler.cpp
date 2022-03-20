@@ -2,6 +2,7 @@
 #include "Poco/Exception.h"
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
+#include "accumulator.h"
 #include "common_handler.h"
 #include "image_tools.h"
 
@@ -11,8 +12,9 @@ using namespace Poco::Net;
 namespace charta {
 
 UpdateImageHandler::UpdateImageHandler(Poco::URI uri,
-                                       ChartographerApplication &app)
-    : uri_(std::move(uri)), app_(app) {}
+                                       Accumulator::Accumulator &accumulator_)
+    : uri_(std::move(uri)), accumulator(accumulator_) {}
+
 void UpdateImageHandler::handleRequest(HTTPServerRequest &request,
                                        HTTPServerResponse &response) {
     using std::string;
@@ -24,10 +26,18 @@ void UpdateImageHandler::handleRequest(HTTPServerRequest &request,
 
     try {
         id = std::stoul(id_s);
-        if (!app_.is_present_id(id)) {
-            throw Poco::NotFoundException();
-        }
         args = enrich_arguments(uri_, {X_FIELD, Y_FIELD, HEIGHT, WIDTH});
+
+
+        std::shared_lock lock(accumulator.mutex_id_path);
+        if (!accumulator.exist(id)) {
+            response.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
+            response.send();
+            return;
+        }
+        auto path = accumulator.get_path(id);
+        std::unique_lock lock1(accumulator.get_mutex(id));
+
 
         ImageTools::Image image_to_insert(request.stream());
         if (!(image_to_insert.get_height() == args[HEIGHT] &&
@@ -35,8 +45,6 @@ void UpdateImageHandler::handleRequest(HTTPServerRequest &request,
             throw Poco::InvalidArgumentException();
         }
 
-        std::filesystem::path path =
-            app_.get_working_folder() / (id_s + BMP_EXT);
         ImageTools::Image image_to_edit(path);
 
         if (!ImageTools::rectangle_intersection(
@@ -48,14 +56,14 @@ void UpdateImageHandler::handleRequest(HTTPServerRequest &request,
         image_to_edit.overwrite(image_to_insert, args[Y_FIELD], args[X_FIELD]);
 
         image_to_edit.dump(path);
-        response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+        response.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_OK);
 
     } catch (Poco::InvalidArgumentException &) {
-        response.setStatus(HTTPResponse::HTTP_BAD_REQUEST);
+        response.setStatusAndReason(HTTPResponse::HTTP_BAD_REQUEST);
     } catch (Poco::NotFoundException &) {
-        response.setStatus(HTTPResponse::HTTP_NOT_FOUND);
+        response.setStatusAndReason(HTTPResponse::HTTP_NOT_FOUND);
     } catch (...) {
-        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     response.send();

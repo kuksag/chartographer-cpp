@@ -7,7 +7,6 @@ namespace charta {
 static const char *const HEIGHT = "height";
 static const char *const WIDTH = "width";
 static const char *const ID = "id";
-static const char *const BMP_EXT = ".bmp";
 static const char *const X_FIELD = "x";
 static const char *const Y_FIELD = "y";
 static const char *const IMAGE_MEDIA_TYPE = "image";

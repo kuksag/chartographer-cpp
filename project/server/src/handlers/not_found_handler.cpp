@@ -4,8 +4,8 @@
 using namespace charta;
 using namespace Poco::Net;
 
-void NotFoundHandler::handleRequest(HTTPServerRequest &request,
+void NotFoundHandler::handleRequest(HTTPServerRequest &,
                                     HTTPServerResponse &response) {
-    response.setStatus(HTTPResponse::HTTP_NOT_FOUND);
+    response.setStatusAndReason(HTTPResponse::HTTP_NOT_FOUND);
     response.send();
 }

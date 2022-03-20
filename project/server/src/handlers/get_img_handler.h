@@ -1,17 +1,18 @@
 #pragma once
 #include "Poco/Net/HTTPRequestHandler.h"
 #include "Poco/URI.h"
-#include "chartographer_application.h"
+#include "accumulator.h"
 #include "image_tools.h"
 
 namespace charta {
 class GetImageHandler : public Poco::Net::HTTPRequestHandler {
 private:
     Poco::URI uri_;
-    ChartographerApplication &app_;
+    Accumulator::Accumulator &accumulator;
 
 public:
-    explicit GetImageHandler(Poco::URI uri, ChartographerApplication &app);
+    explicit GetImageHandler(Poco::URI uri,
+                             Accumulator::Accumulator &accumulator_);
 
     void handleRequest(Poco::Net::HTTPServerRequest &request,
                        Poco::Net::HTTPServerResponse &response) override;
