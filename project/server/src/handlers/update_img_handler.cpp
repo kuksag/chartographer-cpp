@@ -45,7 +45,7 @@ void UpdateImageHandler::handleRequest(HTTPServerRequest &request,
             throw Poco::InvalidArgumentException();
         }
 
-        image_to_edit.overwrite(image_to_insert, args[X_FIELD], args[Y_FIELD]);
+        image_to_edit.overwrite(image_to_insert, args[Y_FIELD], args[X_FIELD]);
 
         image_to_edit.dump(path);
         response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);

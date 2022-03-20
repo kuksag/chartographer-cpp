@@ -40,7 +40,7 @@ void charta::GetImageHandler::handleRequest(
 
             try {
                 image
-                    .crop(args[X_FIELD], args[Y_FIELD], args[HEIGHT],
+                    .crop(args[Y_FIELD], args[X_FIELD], args[HEIGHT],
                           args[WIDTH])
                     .dump(temp_path);
                 response.sendFile(temp_path, IMAGE_MEDIA_TYPE);
