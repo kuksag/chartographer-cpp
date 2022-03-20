@@ -46,6 +46,10 @@ Image::Image(const std::filesystem::path &path) {
 }
 
 Image::Image(std::istream &is) {
+    /*
+     * TODO: use stbi_load_from_callbacks because of asynchronous IO
+     * I tried to implement in that way but somehow it doesn't work
+     */
     auto data = exhaust_stream(is);
     auto *img = reinterpret_cast<Pixel *>(stbi_load_from_memory(
         data.data(), data.size(), &width_, &height_, nullptr, STBI_rgb));

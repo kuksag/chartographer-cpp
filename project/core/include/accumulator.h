@@ -10,6 +10,7 @@ class Accumulator {
     struct Resource {
         std::filesystem::path path;
         std::shared_mutex mutex{};
+        // TODO: have only one instance of an image per time via shared_ptr
     };
 
     std::filesystem::path working_directory;

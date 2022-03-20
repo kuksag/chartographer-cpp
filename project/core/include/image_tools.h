@@ -24,6 +24,9 @@ struct Pixel {
 #pragma pack(pop)
 
 class Image {
+    /*
+     * There can be a negative dimensions, but we use them as if they're positive
+     */
     int height_{};
     int width_{};
 
