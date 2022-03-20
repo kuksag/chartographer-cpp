@@ -20,24 +20,21 @@ void UpdateImageHandler::handleRequest(HTTPServerRequest &request,
     using std::string;
     using std::vector;
 
-    string id_s = get_id(uri_);
-    size_t id;
-    std::unordered_map<string, int> args;
-
     try {
-        id = std::stoul(id_s);
-        args = enrich_arguments(uri_, {X_FIELD, Y_FIELD, HEIGHT, WIDTH});
-
+        string id_s = get_id(uri_);
+        size_t id = std::stoul(id_s);
+        std::unordered_map<string, int> args =
+            enrich_arguments(uri_, {X_FIELD, Y_FIELD, HEIGHT, WIDTH});
 
         std::shared_lock lock(accumulator.mutex_id_path);
         if (!accumulator.exist(id)) {
-            response.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
+            response.setStatusAndReason(
+                Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
             response.send();
             return;
         }
         auto path = accumulator.get_path(id);
         std::unique_lock lock1(accumulator.get_mutex(id));
-
 
         ImageTools::Image image_to_insert(request.stream());
         if (!(image_to_insert.get_height() == args[HEIGHT] &&
@@ -63,7 +60,8 @@ void UpdateImageHandler::handleRequest(HTTPServerRequest &request,
     } catch (Poco::NotFoundException &) {
         response.setStatusAndReason(HTTPResponse::HTTP_NOT_FOUND);
     } catch (...) {
-        response.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setStatusAndReason(
+            Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     response.send();

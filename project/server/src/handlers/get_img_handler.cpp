@@ -53,7 +53,7 @@ void charta::GetImageHandler::handleRequest(
             return;
         } catch (std::exception &e) {
             remove(temp_path);
-            throw e;
+            throw;
         }
     } catch (Poco::InvalidArgumentException &) {
         response.setStatusAndReason(HTTPResponse::HTTP_BAD_REQUEST);
