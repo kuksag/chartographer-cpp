@@ -89,7 +89,7 @@ void Image::check_pixels_or_throw() const {
 void Image::dump(const std::filesystem::path &filename) const {
     if (!stbi_write_bmp(filename.c_str(), width_, height_, STBI_rgb,
                         pixels_.data())) {
-        throw std::runtime_error("");
+        throw Poco::WriteFileException();
     }
 }
 
