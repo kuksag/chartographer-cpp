@@ -39,6 +39,12 @@ void UpdateImageHandler::handleRequest(HTTPServerRequest &request,
             app_.get_working_folder() / (id_s + BMP_EXT);
         ImageTools::Image image_to_edit(path);
 
+        if (!ImageTools::rectangle_intersection(
+                0, 0, image_to_edit.get_width(), image_to_edit.get_height(),
+                args[X_FIELD], args[Y_FIELD], args[WIDTH], args[HEIGHT])) {
+            throw Poco::InvalidArgumentException();
+        }
+
         image_to_edit.overwrite(image_to_insert, args[X_FIELD], args[Y_FIELD]);
 
         image_to_edit.dump(path);
