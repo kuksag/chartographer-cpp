@@ -1,6 +1,5 @@
 #include "common_handler.h"
-#include <tuple>
-
+#include "Poco/Exception.h"
 namespace charta {
 
 std::string get_id(const Poco::URI &uri) {
@@ -22,11 +21,11 @@ std::unordered_map<std::string, std::string> get_uri_arguments(
     return result;
 }
 
-std::unordered_map<std::string, size_t> enrich_arguments(
+std::unordered_map<std::string, int> enrich_arguments(
     const Poco::URI &uri,
     const std::vector<std::string> &expected) {
     using std::string;
-    std::unordered_map<string, size_t> result;
+    std::unordered_map<string, int> result;
 
     auto args = get_uri_arguments(uri);
     for (const string &key : expected) {
@@ -34,7 +33,7 @@ std::unordered_map<std::string, size_t> enrich_arguments(
         if (it != args.end()) {
             result.emplace(key, strtoul(it->second.c_str(), nullptr, 10));
         } else {
-            throw;
+            throw Poco::InvalidArgumentException();
         }
     }
 

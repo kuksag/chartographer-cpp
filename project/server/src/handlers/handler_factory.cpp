@@ -6,11 +6,13 @@
 #include "delete_img_handler.h"
 #include "get_img_handler.h"
 #include "handlers/not_found_handler.h"
+#include "update_img_handler.h"
 
 using namespace charta;
 using namespace Poco::Net;
 
-HandlerFactory::HandlerFactory(ChartographerApplication &app) : app_(app) {
+HandlerFactory::HandlerFactory(ChartographerApplication &app)
+    : app_(app) {
 }
 
 Poco::Net::HTTPRequestHandler *HandlerFactory::createRequestHandler(
@@ -29,6 +31,7 @@ Poco::Net::HTTPRequestHandler *HandlerFactory::createRequestHandler(
 
     if (segments.size() == 2 && segments.front() == CHARTAS_METHOD &&
         request.getMethod() == HTTPRequest::HTTP_POST) {
+        return new UpdateImageHandler(uri, app_);
     }
 
     if (segments.size() == 2 && segments.front() == CHARTAS_METHOD &&

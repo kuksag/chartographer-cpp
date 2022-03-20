@@ -4,7 +4,6 @@
 #include <filesystem>
 #include <string>
 #include <vector>
-#include "exceptions.h"
 
 namespace charta::ImageTools {
 
@@ -58,6 +57,9 @@ public:
 
     [[nodiscard]] bool contains(size_t row, size_t col) const noexcept;
     void overwrite(const Image &other_image, int row, int col);
+
+    [[nodiscard]] int get_height() const noexcept;
+    [[nodiscard]] int get_width() const noexcept;
 };
 
 }  // namespace charta::ImageTools

@@ -7,6 +7,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
 #include "stb_image_write.h"
+#include "Poco/Exception.h"
 
 namespace charta::ImageTools {
 
@@ -65,7 +66,7 @@ void Image::check_pixels_or_throw(const std::vector<Pixel> &pixels,
                                   int height,
                                   int width) {
     if (static_cast<int>(pixels.size()) != abs(height * width)) {
-        throw DimensionsError();
+        throw Poco::InvalidArgumentException();
     }
 }
 
@@ -73,7 +74,7 @@ void Image::check_dimensions_or_throw(int height, int width) {
     bool flag = 0 < abs(height) && abs(height) < MAX_HEIGHT && 0 < abs(width) &&
                 abs(width) < MAX_WIDTH;
     if (!flag) {
-        throw DimensionsError();
+        throw Poco::InvalidArgumentException();
     }
 }
 
@@ -144,6 +145,14 @@ void Image::overwrite(const Image &other_image, int row, int col) {
 bool Image::contains(size_t row, size_t col) const noexcept {
     return row < static_cast<size_t>(abs(height_)) &&
            col < static_cast<size_t>(abs(width_));
+}
+
+int Image::get_height() const noexcept {
+    return height_;
+}
+
+int Image::get_width() const noexcept {
+    return width_;
 }
 
 bool Pixel::operator==(const Pixel &other) const {

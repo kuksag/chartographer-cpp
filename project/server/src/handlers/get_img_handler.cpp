@@ -4,11 +4,9 @@
 #include "common_handler.h"
 #include "image_tools.h"
 
-charta::GetImageHandler::GetImageHandler(
-    Poco::URI uri,
-    charta::ChartographerApplication &app)
-    : uri_(std::move(uri)), app_(app) {
-}
+charta::GetImageHandler::GetImageHandler(Poco::URI uri,
+                                         charta::ChartographerApplication &app)
+    : uri_(std::move(uri)), app_(app) {}
 
 using namespace charta;
 using namespace Poco::Net;
@@ -19,8 +17,7 @@ class AutoDeleteFile {
 
 public:
     explicit AutoDeleteFile(const std::filesystem::path &file_path)
-        : file_path_(file_path) {
-    }
+        : file_path_(file_path) {}
 
     ~AutoDeleteFile() {
         try {
@@ -39,11 +36,10 @@ void charta::GetImageHandler::handleRequest(
 
     string id_s = get_id(uri_);
     size_t id;
-    std::unordered_map<string, size_t> args;
+    std::unordered_map<string, int> args;
     try {
         id = strtoul(id_s.c_str(), nullptr, 10);
-        args =
-            enrich_arguments(uri_, {X_FIELD, Y_FIELD, WIDTH, HEIGHT});
+        args = enrich_arguments(uri_, {X_FIELD, Y_FIELD, WIDTH, HEIGHT});
     } catch (...) {
         response.setStatus(HTTPResponse::HTTP_BAD_REQUEST);
     }
@@ -60,20 +56,14 @@ void charta::GetImageHandler::handleRequest(
                 (ImageTools::gen_unique_id() + BMP_EXT);
 
             AutoDeleteFile autoDeleteFile(temp_path);
-            image.crop(args[X_FIELD],
-                      args[Y_FIELD],
-                      args[HEIGHT],
-                      args[WIDTH])
+            image.crop(args[X_FIELD], args[Y_FIELD], args[HEIGHT], args[WIDTH])
                 .dump(temp_path);
 
             response.sendFile(temp_path, IMAGE_MEDIA_TYPE);
             response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
             return;
-        } catch (std::invalid_argument &) {
+        } catch (Poco::InvalidArgumentException &) {
             response.setStatus(HTTPResponse::HTTP_BAD_REQUEST);
-        } catch (std::bad_alloc &) {
-            response.setStatus(
-                HTTPResponse::HTTP_INSUFFICIENT_STORAGE);
         } catch (...) {
             response.setStatus(
                 Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
